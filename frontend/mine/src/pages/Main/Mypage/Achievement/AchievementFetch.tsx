@@ -9,15 +9,7 @@ import { achievementListBox } from './style';
 import AchievementBox from './AchievementBox';
 import { Button } from 'oyc-ds';
 import { useNavigate } from 'react-router-dom';
-
-export interface IAchievement {
-  achievementId: number;
-  title: string;
-  description: string;
-  amount: number;
-  count: number;
-  achievedDate?: string;
-}
+import { IAchievement } from '../../../../interfaces/achievementInterface';
 
 const AchievementFetch = () => {
   const nav = useNavigate();

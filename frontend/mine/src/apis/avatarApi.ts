@@ -1,20 +1,7 @@
 import axios from 'axios';
 import { api } from './interceptors';
 import { IAvatar } from '../interfaces/avatarInterface';
-
-export interface QuestionChoice {
-  questionChoiceId: number;
-  number: number;
-  description: string;
-}
-
-export interface QuestionData {
-  questionId: number;
-  num: number;
-  description: string;
-  type: 'c' | 's';
-  questionChoiceList: QuestionChoice[];
-}
+import { IQuestion } from '../interfaces/qnaInterface';
 
 export interface SentenceData {
   sentenceId: number;
@@ -59,8 +46,6 @@ export interface NewAnsListData {
   anss: NewAnsData[];
 }
 
-//-------------------------------------------
-
 export interface AvatarInfoUpdateRequestData {
   avatarId: number;
   infoType: string;
@@ -77,10 +62,8 @@ export const updateAvatarInfo = (info: AvatarInfoUpdateRequestData) => {
   });
 };
 
-//-------------------------------------------
-
 export const getQuestions = () => {
-  return api.get<QuestionData[]>('/api/question');
+  return api.get<IQuestion[]>('/api/question');
 };
 
 export const createAvatar = (param: CreateAvatarRequest) => {

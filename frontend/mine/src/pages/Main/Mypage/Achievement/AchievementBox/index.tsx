@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import React from 'react';
-import { IAchievement } from '../AchievementFetch';
 import {
   achievementBoxCss,
   achieveInfoCss,
@@ -15,12 +14,13 @@ import { BackDrop, Icon, Typography } from 'oyc-ds';
 import { css } from '@emotion/react';
 import { AcademicCapIcon } from '@heroicons/react/24/solid';
 import dayjs from 'dayjs';
+import { IAchievement } from '../../../../../interfaces/achievementInterface';
 
-interface IAchievementBox {
+interface AchievementBoxProps {
   info: IAchievement;
   disabled: boolean;
 }
-const AchievementBox = ({ info, disabled }: IAchievementBox) => {
+const AchievementBox = ({ info, disabled }: AchievementBoxProps) => {
   return (
     <div css={achievementBoxCss} style={{ display: disabled ? 'none' : '' }}>
       <BackDrop opacity={0.3} blur={1} css={achievedCss(info.achievedDate)}>

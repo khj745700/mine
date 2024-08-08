@@ -3,10 +3,11 @@ import { Progress, Typography } from 'oyc-ds';
 import React, { useRef, useState } from 'react';
 import { descCss } from './style';
 import QnA from '../../../components/organisms/QnA';
-import { QuestionAnswer, QuestionData } from '../../../apis/avatarApi';
+import { QuestionAnswer } from '../../../apis/avatarApi';
+import { IQuestion } from '../../../interfaces/qnaInterface';
 
 interface QuestionProps {
-  items: QuestionData[];
+  items: IQuestion[];
   onSubmit: (result: QuestionAnswer[]) => void;
 }
 

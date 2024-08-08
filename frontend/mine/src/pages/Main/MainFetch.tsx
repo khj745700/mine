@@ -10,11 +10,11 @@ import { getUserInfo } from '../../apis/mypageApi';
 import { getUserAvatars } from '../../apis/avatarApi';
 import { contentCss } from './style';
 
-interface MainFetch {
+interface MainFetchProps {
   menu: number;
 }
 
-const MainFetch = ({ menu }: MainFetch) => {
+const MainFetch = ({ menu }: MainFetchProps) => {
   const [userQuery, avatarQuery] = useSuspenseQueries({
     queries: [
       { queryKey: ['userinfo'], queryFn: async () => await getUserInfo() },

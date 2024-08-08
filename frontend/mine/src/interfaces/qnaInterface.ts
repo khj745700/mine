@@ -8,7 +8,7 @@ export interface IQuestion {
   questionId: number;
   num: number;
   description: string;
-  type: string;
+  type: 'c' | 's';
   questionChoiceList: IChoice[];
 }
 

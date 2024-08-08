@@ -2,10 +2,10 @@
 import React from 'react';
 import { Button } from 'oyc-ds';
 import { css } from '@emotion/react';
-import { QuestionChoice } from '../../../apis/avatarApi';
+import { IChoice } from '../../../interfaces/qnaInterface';
 
 interface MultipleChoiceProps {
-  items: QuestionChoice[];
+  items: IChoice[];
   selected: number;
   onSelect: (index: number) => void;
 }

@@ -3,12 +3,12 @@ import React, { useRef, useState } from 'react';
 import { buttonContainerCss, questionCss } from './style';
 import { Button, TextField, Typography } from 'oyc-ds';
 import MultipleChoice from '../../../components/molecules/MultipleChoice';
-import { QuestionChoice } from '../../../apis/avatarApi';
 import useDialog from '../../../hooks/useDialog';
+import { IChoice } from '../../../interfaces/qnaInterface';
 
 interface QnAProps {
   question: string;
-  choices?: QuestionChoice[];
+  choices?: IChoice[];
   onSubmit: (choice: number | null, answer: string | null) => void;
 }
 
