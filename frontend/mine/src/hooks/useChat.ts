@@ -1,8 +1,8 @@
 import { ReactNode, useRef } from 'react';
 import { AccountData, addAccountByChat } from '../apis/accountApi';
 import { addScheduleByChat, ScheduleData } from '../apis/scheduleApi';
-import { apiFormatDateTime } from '../utils/dateUtils';
-import { api } from '../apis/interceptors';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 
 export type ChatType = 'chat' | 'schedule' | 'account';
 
@@ -13,92 +13,128 @@ export interface ChatMessageData {
   dateTime: string;
 }
 
+export interface ChatResponse {
+  avatarId: number;
+  avatarName: string;
+  role: string;
+  sendedDate: string;
+  text: string;
+}
+
+interface ChatEventHandler {
+  onOpen: () => void;
+  onError: () => void;
+  onClose: () => void;
+  onMessage: (message: ChatResponse) => void;
+  onAccount: EventCallback<AccountData>;
+  onSchedule: EventCallback<ScheduleData>;
+}
+
 type EventCallback<T> = (data: T) => void;
 
-const useChat = (server: string) => {
-  const socketRef = useRef<WebSocket>();
+const useChat = (
+  avatarId: number,
+  server: string = 'https://i11d106.p.ssafy.io/chat/stomp/chat',
+) => {
   const accountRef = useRef<EventCallback<AccountData>>(() => {});
   const scheduleRef = useRef<EventCallback<ScheduleData>>(() => {});
-
-  const connect = (
-    onOpen: () => void,
-    onError: () => void,
-    onClose: () => void,
-    onMessage: (data: object) => void,
-    onAccount: EventCallback<AccountData>,
-    onSchedule: EventCallback<ScheduleData>,
-  ) => {
-    accountRef.current = onAccount;
-    scheduleRef.current = onSchedule;
-    /*
-    socketRef.current = new WebSocket(server);
+  const socketRef = useRef<Client>();
+  const connect = ({
+    onOpen,
+    onError,
+    onClose,
+    onMessage,
+    onAccount,
+    onSchedule,
+  }: ChatEventHandler) => {
+    socketRef.current = new Client({
+      webSocketFactory: () =>
+        new SockJS(server, null, {
+          transports: ['websocket', 'jsonp'],
+        }),
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
 
     const socket = socketRef.current;
 
-    socket.addEventListener('close', () => {
-      onClose();
-    });
+    if (!socket) {
+      return;
+    }
 
-    socket.addEventListener('error', () => {
-      onError();
-    });
-
-    socket.addEventListener('message', (e) => {
-      onMessage(JSON.parse(e.data));
-    });
-
-    socket.addEventListener('open', () => {
+    socket.onConnect = () => {
       onOpen();
-    });
-    */
+      socket.subscribe(`/chat/${avatarId}`, (message) => {
+        const data: ChatResponse = JSON.parse(message.body);
+        addLog({
+          me: false,
+          name: data.avatarName,
+          message: data.text,
+          dateTime: data.sendedDate,
+        });
+        onMessage(data);
+      });
+    };
+
+    socket.onStompError = onError;
+    socket.onWebSocketClose = onClose;
+
+    socket.activate();
+
+    accountRef.current = onAccount;
+    scheduleRef.current = onSchedule;
+  };
+
+  const addLog = (data: ChatMessageData) => {
+    const log: ChatMessageData[] = getLog();
+    log.push(data);
+    localStorage.setItem('chatLog', JSON.stringify(log.slice(-30)));
+  };
+
+  const getLog = (): ChatMessageData[] => {
+    return JSON.parse(localStorage.getItem('chatLog') ?? '[]');
   };
 
   const send = async (type: ChatType, content: string, onSend: () => void) => {
     switch (type) {
       case 'chat': {
+        const date = new Date().toJSON();
+
+        addLog({ me: true, name: '나', message: content, dateTime: date });
         onSend();
-        await api.post('/chat/test', {
-          assistant_id: 'asst_gzUHR2Orr2KnitbLKcoaU9q3',
-          thread_id: 'thread_l57yNZOhonW5h2vOm8gkzhgw',
-          chat_content: content,
+
+        const socket = socketRef.current;
+        if (!socket) {
+          return;
+        }
+        socket.publish({
+          destination: `/pub/${avatarId}`,
+          body: JSON.stringify({
+            chatContent: content,
+            sendedAt: date,
+          }),
         });
         break;
       }
       case 'account': {
         onSend();
+
         const result = await addAccountByChat({ query: content });
         accountRef.current(result.data);
         break;
       }
       case 'schedule': {
         onSend();
+
         const result = await addScheduleByChat({ query: content });
         scheduleRef.current(result.data);
         break;
       }
     }
-    // console.log(
-    //   await api.post('/chat/test', {
-    //     assistant_id: 'asst_gzUHR2Orr2KnitbLKcoaU9q3',
-    //     thread_id: 'thread_l57yNZOhonW5h2vOm8gkzhgw',
-    //     chat_content: content,
-    //   }),
-    // );
-
-    /*const socket = socketRef.current;
-
-    // 지워야함
-    onSend();
-
-    if (!socket || socket.readyState !== WebSocket.OPEN) {
-      return;
-    }
-
-    socket.send(JSON.stringify({ type, content }));
-    onSend();*/
   };
 
-  return { connect, send };
+  return { connect, send, getLog };
 };
 
 export default useChat;

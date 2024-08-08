@@ -8,4 +8,5 @@ export const mainContainerCss = css`
 
 export const contentCss = css`
   flex: 1;
+  overflow-y: scroll;
 `;

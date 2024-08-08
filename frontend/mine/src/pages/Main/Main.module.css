@@ -1,11 +1,11 @@
 .fade-enter {
-  transform: translateX(10vw) scale(0.9) !important;
+  transform: translateX(10vw) !important;
   opacity: 0 !important;
 }
 
 .fade-exit {
   position: absolute;
-  transform: translateX(10vw) scale(0.9) !important;
+  transform: translateX(10vw) !important;
   opacity: 0 !important;
   pointer-events: none;
   user-select: none;
