@@ -7,7 +7,7 @@ import styles from './Main.module.css';
 import Home from './Home';
 import { containerCss, contentCss } from './style';
 import Chat from './Chat';
-import MypageV2 from './MypageV2';
+import MypageV2 from './Mypage';
 import { useLocation } from 'react-router-dom';
 
 const Main = () => {

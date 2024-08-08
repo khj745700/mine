@@ -17,9 +17,7 @@ import {
   eyesCss,
 } from './Login.styles';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  EyeIcon, EyeSlashIcon
-} from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 interface ColorInfo {
   email: Palette;
@@ -45,7 +43,7 @@ const Login = () => {
   });
 
   const onToggleHide = () => {
-    setHide(prevHide => !prevHide); // 현재 상태를 반전
+    setHide((prevHide) => !prevHide); // 현재 상태를 반전
   };
 
   useEffect(() => {
@@ -158,22 +156,31 @@ const Login = () => {
             label="비밀번호"
             maxRows={10}
             placeholder="영문, 숫자 포함 8글자 이상"
-            type={hide ? 'password': 'text'}
+            type={hide ? 'password' : 'text'}
             variant="outlined"
             onChange={passwordChange}
             onKeyUp={PasswordValidation}
             value={password}
           />
-          <div style={{  
-            position: 'absolute', 
-            right: '10px', 
-            top: '50%', 
-            transform: 'translateY(-50%)',
-            cursor: 'pointer'}}>
+          <div
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              cursor: 'pointer',
+            }}
+          >
             {hide ? (
-              <EyeSlashIcon style={{ width: '30px', height: '30px' }} onClick={onToggleHide}/>
+              <EyeSlashIcon
+                style={{ width: '30px', height: '30px' }}
+                onClick={onToggleHide}
+              />
             ) : (
-              <EyeIcon style={{ width: '30px', height: '30px' }} onClick={onToggleHide}/>
+              <EyeIcon
+                style={{ width: '30px', height: '30px' }}
+                onClick={onToggleHide}
+              />
             )}
           </div>
           {!passwordvalidation && password ? (
@@ -229,7 +236,7 @@ const Login = () => {
         color="secondary"
         size="xs"
         weight="medium"
-        onClick={() => nav('/findpassword')}
+        onClick={() => nav('/user/findpassword')}
       >
         비밀번호 찾기
       </Typography>

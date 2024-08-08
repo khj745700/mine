@@ -5,7 +5,7 @@ import TransitionAnimation from '../../components/common/TransitionAnimation';
 import styles from './FindPassword.module.css';
 import { containerCss } from './style';
 import EmailVerification from './EmailInput';
-import Password from '../MyPage/EditUser/PwdEdit/Password';
+import Password from '../Main/Mypage/EditUser/PwdEdit/Password';
 import { useNavigate } from 'react-router-dom';
 
 interface EmailInfo {
@@ -29,10 +29,7 @@ const FindPassword = () => {
 
   return (
     <div>
-      <AppBar
-        label="비밀번호 찾기"
-        onBackClick={() => nav('/')}
-      >
+      <AppBar label="비밀번호 찾기" onBackClick={() => nav('/')}>
         <AppBar.Progress value={step + 1} max={2} />
       </AppBar>
       <div css={containerCss}>

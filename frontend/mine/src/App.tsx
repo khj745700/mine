@@ -20,12 +20,12 @@ import Schedule from './pages/Schedule';
 import Account from './pages/Account';
 import AccountChart from './pages/Statistics/Account/index';
 import ScheduleChart from './pages/Statistics/Schedule/index';
-import NickEdit from './pages/Main/MypageV2/EditUser/NickEdit';
-import PwdEdit from './pages/Main/MypageV2/EditUser/PwdEdit';
-import Achievement from './pages/Main/MypageV2/Achievement';
-import AvatarInfo from './pages/Main/MypageV2/AvatarInfo';
-import AvatarInfoEdit from './pages/Main/MypageV2/EditAvatar/AvatarInfoEdit';
-import AvatarQnAEdit from './pages/Main/MypageV2/EditAvatar/AvatarQnAEdit';
+import NickEdit from './pages/Main/Mypage/EditUser/NickEdit';
+import PwdEdit from './pages/Main/Mypage/EditUser/PwdEdit';
+import Achievement from './pages/Main/Mypage/Achievement';
+import AvatarInfo from './pages/Main/Mypage/AvatarInfo';
+import AvatarInfoEdit from './pages/Main/Mypage/EditAvatar/AvatarInfoEdit';
+import AvatarQnAEdit from './pages/Main/Mypage/EditAvatar/AvatarQnAEdit';
 
 function App() {
   const [notiInfo, setNotiInfo] = useState<INotiInfo>({
