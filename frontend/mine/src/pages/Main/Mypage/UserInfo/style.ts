@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-export const userInfoCss = css`
+export const userInfoContainerCss = css`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -16,14 +16,8 @@ export const avatarCss = css`
   box-shadow: 0 0 0.25rem 0 rgba(0, 0, 0, 0.04);
 `;
 
-export const infoContainerCss = css`
+export const infoCss = css`
   display: flex;
   flex-direction: column;
   row-gap: 0.75rem;
-`;
-
-export const infoCss = css`
-  display: flex;
-  align-items: center;
-  column-gap: 0.5rem;
 `;

@@ -1,18 +1,19 @@
 /** @jsxImportSource @emotion/react */
 import { Button, TextField, Typography } from 'oyc-ds';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { pwdVerificationCss } from './style';
 import { Palette } from 'oyc-ds/dist/themes/lightTheme';
 import { useNavigate } from 'react-router-dom';
-import { NotificationContext } from '../../../../../../utils/NotificationContext';
 import { updatePassword } from '../../../../../../apis/mypageApi';
-import { useMutation } from '@tanstack/react-query';
+import { QueryClient, useMutation } from '@tanstack/react-query';
 import useDialog from '../../../../../../hooks/useDialog';
+import useNotification from '../../../../../../hooks/useNotification';
 
 const Password = () => {
-  const notificationContext = useContext(NotificationContext);
+  const noti = useNotification();
   const nav = useNavigate();
   const pwdCheck = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$/;
+  const queryClient = new QueryClient();
   const { alert } = useDialog();
   const [color, setColor] = useState<Palette>('primary');
   const [pwd, setPwd] = useState<string>('');
@@ -30,12 +31,9 @@ const Password = () => {
 
   const { mutate } = useMutation({
     mutationFn: () => updatePassword(pwd),
-    onSuccess: () => {
-      notificationContext.handle(
-        'contained',
-        'success',
-        '비밀번호를 변경하였습니다',
-      );
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['userinfo'] });
+      noti.handle('contained', 'success', '비밀번호를 변경하였습니다');
       nav('/', { state: { step: 2 } });
     },
     onError: () => alert('비밀번호 변경에 실패했습니다.'),
@@ -44,7 +42,7 @@ const Password = () => {
   return (
     <>
       <div css={pwdVerificationCss}>
-        <Typography size={'xl'} weight={'medium'} color={'dark'}>
+        <Typography size="xl" weight="medium" color="dark">
           비밀번호를 입력해주세요
         </Typography>
         <div style={{ marginTop: '1rem' }}></div>

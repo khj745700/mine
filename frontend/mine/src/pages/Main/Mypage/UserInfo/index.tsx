@@ -1,15 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import React from 'react';
-import { avatarCss, infoContainerCss, infoCss, userInfoCss } from './style';
-import { engToIcon } from '../../../../utils/EngToIcon';
-import { Icon, Typography } from 'oyc-ds';
+import { userInfoContainerCss, avatarCss, infoCss } from './style';
+import { IUserInfo } from '../../../../interfaces/userInterface';
 import Avatar3D from '../../../../components/atoms/Avatar3D';
-
-interface IUserInfo {
-  email: string;
-  nickname: string;
-  gender: string;
-}
+import LabeledIcon from '../../../../components/molecules/LabeledIcon';
 
 interface UserInfoProps {
   avatarModel: string;
@@ -18,29 +12,14 @@ interface UserInfoProps {
 
 const UserInfo = ({ avatarModel, info }: UserInfoProps) => {
   return (
-    <div css={userInfoCss}>
+    <div css={userInfoContainerCss}>
       <div css={avatarCss}>
-        <Avatar3D avatarModel={avatarModel ? avatarModel : 'pig'} />
+        <Avatar3D avatarModel={avatarModel} />
       </div>
-      <div css={infoContainerCss}>
-        <div css={infoCss}>
-          <Icon>{engToIcon['email']}</Icon>
-          <Typography size="sm" color="dark">
-            {info.email}
-          </Typography>
-        </div>
-        <div css={infoCss}>
-          <Icon>{engToIcon['nickname']}</Icon>
-          <Typography size="sm" color="dark">
-            {info.nickname}
-          </Typography>
-        </div>
-        <div css={infoCss}>
-          <Icon>{engToIcon['gender']}</Icon>
-          <Typography size="sm" color="dark">
-            {info.gender}
-          </Typography>
-        </div>
+      <div css={infoCss}>
+        <LabeledIcon label="email" content={info.email} />
+        <LabeledIcon label="nickname" content={info.nickname} />
+        <LabeledIcon label="gender" content={info.gender} />
       </div>
     </div>
   );

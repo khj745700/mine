@@ -1,13 +1,12 @@
-import { IAnswerData } from '../types/qnaType';
+import { IAnswerData } from '../interfaces/qnaInterface';
+import { IUserInfo } from '../interfaces/userInterface';
 import { api } from './interceptors';
 
-/* 사용자 정보 조회 */
 export const getUserInfo = () => {
-  return api({
-    url: '/api/user/info',
-    method: 'get',
-  });
+  return api.get<IUserInfo>('/api/user/info');
 };
+
+//-------------------------------------------
 
 /* 사용자 정보 수정 */
 export const updateNickname = (newNickname: string) => {
@@ -67,29 +66,6 @@ export const getAchievedCount = () => {
   return api({
     url: '/api/users/achievements/count',
     method: 'get',
-  });
-};
-
-/* 사용자 아바타 조회 */
-export const getUserAvatars = () => {
-  return api({
-    url: '/api/avatars',
-    method: 'get',
-  });
-};
-
-/* 사용자 아바타 기본정보 수정 */
-export const updateAvatarInfo = (
-  avatarId: number,
-  infoType: string,
-  value: string | boolean,
-) => {
-  return api({
-    url: `/api/avatars/${avatarId}`,
-    method: 'patch',
-    data: {
-      [infoType]: value,
-    },
   });
 };
 

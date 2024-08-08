@@ -2,7 +2,7 @@
 import React from 'react';
 import { BackDrop, Toast, Typography } from 'oyc-ds';
 import { toastCss } from './style';
-import { INotification } from '../../../utils/NotificationContext';
+import { INotification } from '../../../hooks/useNotification';
 
 const Notification = ({ notiInfo }: INotification) => {
   return (

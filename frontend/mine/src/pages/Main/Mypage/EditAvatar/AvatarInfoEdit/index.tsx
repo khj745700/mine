@@ -1,19 +1,19 @@
 /** @jsxImportSource @emotion/react */
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { NotificationContext } from '../../../../../utils/NotificationContext';
 import { Palette } from 'oyc-ds/dist/themes/lightTheme';
-import { updateAvatarInfo } from '../../../../../apis/mypageApi';
 import { avatarInfoEditContainerCss, contentCss } from './style';
 import AppBar from '../../../../../components/organisms/AppBar';
 import { Button, TextField, Typography } from 'oyc-ds';
 import useDialog from '../../../../../hooks/useDialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { updateAvatarInfo } from '../../../../../apis/avatarApi';
+import useNotification from '../../../../../hooks/useNotification';
 
 const AvatarInfoEdit = () => {
   const nav = useNavigate();
   const location = useLocation();
-  const notificationContext = useContext(NotificationContext);
+  const noti = useNotification();
   const queryClient = useQueryClient();
   const { alert } = useDialog();
   const [newInfo, setNewInfo] = useState<string>('');
@@ -50,19 +50,15 @@ const AvatarInfoEdit = () => {
 
   const { mutate } = useMutation({
     mutationFn: async () =>
-      await updateAvatarInfo(
-        location.state.avatarId,
-        location.state.colName,
-        newInfo,
-      ),
+      await updateAvatarInfo({
+        avatarId: location.state.avatarId,
+        infoType: location.state.colName,
+        value: newInfo,
+      }),
     onSuccess: (data) => {
       if (data.status === 202) {
         queryClient.invalidateQueries({ queryKey: ['avatarinfo'] });
-        notificationContext.handle(
-          'contained',
-          'success',
-          '정보가 성공적으로 변경되었습니다',
-        );
+        noti.handle('contained', 'success', '정보가 성공적으로 변경되었습니다');
         nav('/', { state: { step: 2 } });
       }
     },

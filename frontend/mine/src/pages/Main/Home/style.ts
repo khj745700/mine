@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-export const containerCss = css`
+export const homeContainerCss = css`
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -8,13 +8,13 @@ export const containerCss = css`
   background-color: #fffcb1;
 `;
 
-export const numberdayCss = css`
+export const mentCss = css`
   text-align: right;
   margin-top: 2rem;
   line-height: 1.75rem;
 `;
 
-export const toggleContainerCss = css`
+export const toggleCss = css`
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -22,11 +22,11 @@ export const toggleContainerCss = css`
   margin-top: 1.5rem;
 `;
 
-export const avatarContainerCss = css`
+export const avatarCss = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(100%);
+  width: 100%;
   height: 20rem;
 `;
 

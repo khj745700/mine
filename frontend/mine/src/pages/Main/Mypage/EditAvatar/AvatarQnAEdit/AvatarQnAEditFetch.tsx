@@ -1,11 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import React, { useCallback, useEffect, useState, useContext } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useMutation, useSuspenseQueries } from '@tanstack/react-query';
 import EditQnA from '../EditQnA';
 import { controlBtnCss, editBtnCss, editListCss } from './style';
 import { Button, Typography, Icon } from 'oyc-ds';
 import { HashtagIcon } from '@heroicons/react/24/solid';
-import { NotificationContext } from '../../../../../utils/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import {
   getAnswers,
@@ -17,8 +16,9 @@ import {
   IAnswerData,
   INewAnswer,
   IQuestion,
-} from '../../../../../types/qnaType';
+} from '../../../../../interfaces/qnaInterface';
 import useDialog from '../../../../../hooks/useDialog';
+import useNotification from '../../../../../hooks/useNotification';
 
 interface IAvatarQnAEditFetchProps {
   avatarId: number;
@@ -38,7 +38,7 @@ const AvatarQnAEditFetch = ({ avatarId }: IAvatarQnAEditFetchProps) => {
     }
   });
 
-  const notificationContext = useContext(NotificationContext);
+  const noti = useNotification();
   const nav = useNavigate();
   const { alert } = useDialog();
   const [index, setIndex] = useState<number>(0);
@@ -118,11 +118,7 @@ const AvatarQnAEditFetch = ({ avatarId }: IAvatarQnAEditFetchProps) => {
       await updateQnA(avatarId, answerDatas);
     },
     onSuccess: () => {
-      notificationContext.handle(
-        'contained',
-        'success',
-        '답안이 성공적으로 변경되었습니다',
-      );
+      noti.handle('contained', 'success', '답안이 성공적으로 변경되었습니다');
       nav(-1);
     },
     onError: () => {

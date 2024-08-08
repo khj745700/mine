@@ -1,19 +1,20 @@
 /** @jsxImportSource @emotion/react */
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import AppBar from '../../../../../components/organisms/AppBar';
 import useDialog from '../../../../../hooks/useDialog';
 import { contentCss, nickEditContainerCss } from './style';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, TextField, Typography } from 'oyc-ds';
 import { updateNickname } from '../../../../../apis/mypageApi';
-import { NotificationContext } from '../../../../../utils/NotificationContext';
 import { Palette } from 'oyc-ds/dist/themes/lightTheme';
-import { useMutation } from '@tanstack/react-query';
+import { QueryClient, useMutation } from '@tanstack/react-query';
+import useNotification from '../../../../../hooks/useNotification';
 
 const NickEdit = () => {
   const nav = useNavigate();
   const location = useLocation();
-  const notificationContext = useContext(NotificationContext);
+  const noti = useNotification();
+  const queryClient = new QueryClient();
   const [newNick, setNewNick] = useState<string>('');
   const [color, setColor] = useState<Palette>('primary');
   const [label, setLabel] = useState<string>('');
@@ -44,12 +45,9 @@ const NickEdit = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (nick: string) => await updateNickname(nick),
-    onSuccess: () => {
-      notificationContext.handle(
-        'contained',
-        'success',
-        '닉네임이 성공적으로 변경되었습니다',
-      );
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['userinfo'] });
+      noti.handle('contained', 'success', '닉네임이 성공적으로 변경되었습니다');
       nav('/', { state: { step: 2 } });
     },
     onError: () => {

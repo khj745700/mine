@@ -1,13 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState } from 'react';
 import { avatarCss, avatarInfoBoxCss, avatarInfoBtn } from './style';
-import InfoBox from '../../../../components/molecules/InfoBox/InfoBox';
-import { IAvatar } from '../AvatarProfile';
-import dayjs from 'dayjs';
-import { Button } from 'oyc-ds';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from 'oyc-ds';
+import dayjs from 'dayjs';
+import InfoBox from '../../../../components/molecules/InfoBox/InfoBox';
 import AppBar from '../../../../components/organisms/AppBar';
 import Avatar3D from '../../../../components/atoms/Avatar3D';
+import { IAvatar } from '../../../../interfaces/avatarInterface';
 
 const AvatarInfo = () => {
   const nav = useNavigate();

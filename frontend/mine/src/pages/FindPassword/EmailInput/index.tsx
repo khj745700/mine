@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { Button, TextField, Typography } from 'oyc-ds';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   emailInputCss,
   emailVerificationCss,
@@ -8,16 +8,16 @@ import {
   nextStepBtnCss,
 } from './style';
 import { Palette } from 'oyc-ds/dist/themes/lightTheme';
-import { sendCode,verifyCode } from '../../../apis/mypageApi';
+import { sendCode, verifyCode } from '../../../apis/mypageApi';
 import { checkEmail } from '../../../apis/authApi';
-import { NotificationContext } from '../../../utils/NotificationContext';
+import useNotification from '../../../hooks/useNotification';
 
 interface EmailVerificationProps {
   nextStep: () => void;
 }
 
 const EmailVerification = ({ nextStep }: EmailVerificationProps) => {
-  const notificationContext = useContext(NotificationContext);
+  const noti = useNotification();
   const emailCheck = /^[A-Za-z0-9_.-]+@[A-Za-z0-9-]+\.[A-za-z0-9-]+/;
   const [emailColor, setEmailColor] = useState<Palette>('primary');
   const [email, setEmail] = useState<string>('');
@@ -44,13 +44,10 @@ const EmailVerification = ({ nextStep }: EmailVerificationProps) => {
         await sendCode(email);
         setStep(1);
       } else {
-        notificationContext.handle(
-          'contained',
-          'danger',
-          '존재하지 않는 이메일입니다',
-      )}
+        noti.handle('contained', 'danger', '존재하지 않는 이메일입니다');
+      }
     } catch (error) {
-      notificationContext.handle(
+      noti.handle(
         'contained',
         'danger',
         '오류가 발생했습니다. 다시 시도해주세요.',
@@ -115,11 +112,7 @@ const EmailVerification = ({ nextStep }: EmailVerificationProps) => {
               await verifyCode(email, code)
                 .then(() => setStep(2))
                 .catch(() => {
-                  notificationContext.handle(
-                    'contained',
-                    'danger',
-                    '인증번호가 틀렸습니다',
-                  );
+                  noti.handle('contained', 'danger', '인증번호가 틀렸습니다');
                 });
             }}
           >

@@ -45,11 +45,23 @@ const AchievementFetch = () => {
     <>
       <div css={achievementListBox}>
         {achievementQuery.data.data.map((info: IAchievement) => {
-          return <AchievementBox key={info.achievementId} info={info} />;
+          return (
+            <AchievementBox
+              key={info.achievementId}
+              info={info}
+              disabled={
+                info.achievementId < 5
+                  ? false
+                  : info.count === info.amount
+                    ? false
+                    : true
+              }
+            />
+          );
         })}
       </div>
       <Button
-        disabled={achievedCountQuery.data.data.count !== 5}
+        disabled={achievedCountQuery.data.data.count !== 7}
         style={{ marginTop: '2rem' }}
         onClick={() => nav('/avatar/create')}
       >

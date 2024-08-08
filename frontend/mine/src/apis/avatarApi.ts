@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { api } from './interceptors';
+import { IAvatar } from '../interfaces/avatarInterface';
 
 export interface QuestionChoice {
   questionChoiceId: number;
@@ -57,6 +58,26 @@ export interface NewAnsListData {
   avatarId: number;
   anss: NewAnsData[];
 }
+
+//-------------------------------------------
+
+export interface AvatarInfoUpdateRequestData {
+  avatarId: number;
+  infoType: string;
+  value: string | boolean;
+}
+
+export const getUserAvatars = () => {
+  return api.get<IAvatar[]>('/api/avatars');
+};
+
+export const updateAvatarInfo = (info: AvatarInfoUpdateRequestData) => {
+  return api.patch(`/api/avatars/${info.avatarId}`, {
+    [info.infoType]: info.value,
+  });
+};
+
+//-------------------------------------------
 
 export const getQuestions = () => {
   return api.get<QuestionData[]>('/api/question');

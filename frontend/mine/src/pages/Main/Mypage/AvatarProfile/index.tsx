@@ -3,45 +3,29 @@ import React from 'react';
 import { containerCss, profileCss } from './style';
 import { Button, Typography } from 'oyc-ds';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateAvatarInfo } from '../../../../apis/mypageApi';
+import { IAvatar } from '../../../../interfaces/avatarInterface';
+import {
+  AvatarInfoUpdateRequestData,
+  updateAvatarInfo,
+} from '../../../../apis/avatarApi';
 import useDialog from '../../../../hooks/useDialog';
-
-export interface IAvatar {
-  avatarId: number;
-  avatarName: string;
-  birthday: string;
-  personality: string;
-  residence: string;
-  voiceId: string;
-  job: string;
-  avatarModel: string;
-  isMain: boolean;
-}
 
 interface AvatarProfileProps {
   avatars: IAvatar[];
 }
 
-interface UpdateData {
-  avatarId: number;
-  infoType: string;
-}
-
 const AvatarProfile = ({ avatars }: AvatarProfileProps) => {
   const queryClient = useQueryClient();
   const { alert } = useDialog();
-
   const { mutate } = useMutation({
-    mutationFn: (data: UpdateData) =>
-      updateAvatarInfo(data.avatarId, data.infoType, true),
+    mutationFn: async (info: AvatarInfoUpdateRequestData) =>
+      await updateAvatarInfo(info),
     onSuccess: (data) => {
       if (data.status === 200) {
         queryClient.invalidateQueries({ queryKey: ['avatarinfo'] });
       }
     },
-    onError: () => {
-      alert('오류가 발생하였습니다.');
-    },
+    onError: () => alert('오류가 발생하였습니다.'),
   });
 
   return (
@@ -65,6 +49,7 @@ const AvatarProfile = ({ avatars }: AvatarProfileProps) => {
                     mutate({
                       avatarId: avatar.avatarId,
                       infoType: 'isMain',
+                      value: true,
                     })
                   }
                 >

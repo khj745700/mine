@@ -2,7 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, TextField, Typography } from 'oyc-ds';
 import { btnContainerCss, containerCss, textfieldCss } from './style';
-import { IAnswer, IChoice, IQuestion } from '../../../../../types/qnaType';
+import {
+  IAnswer,
+  IChoice,
+  IQuestion,
+} from '../../../../../interfaces/qnaInterface';
 
 interface EditQnAProps {
   question: IQuestion;

@@ -1,61 +1,49 @@
 /** @jsxImportSource @emotion/react */
-import React, { useEffect, useState } from 'react';
-import { containerCss } from './style';
-import { useSuspenseQueries } from '@tanstack/react-query';
-import { getUserAvatars, getUserInfo } from '../../../apis/mypageApi';
+import React, { useState } from 'react';
+import { userInfoContainerCss } from './style';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { IUserInfo } from '../../../interfaces/userInterface';
+import { AxiosResponse } from 'axios';
+import { IAvatar } from '../../../interfaces/avatarInterface';
+import { getMainAvatar } from '../../../utils/avatarUtils';
 import UserInfo from './UserInfo';
 import ManageInfo from './ManageInfo';
 import AvatarProfile from './AvatarProfile';
 
-const MypageV2 = () => {
-  const [userQuery, avatarQuery] = useSuspenseQueries({
-    queries: [
-      { queryKey: ['userinfo'], queryFn: async () => await getUserInfo() },
-      { queryKey: ['avatarinfo'], queryFn: async () => await getUserAvatars() },
-    ],
-  });
-
-  [userQuery, avatarQuery].some((query) => {
-    if (query.error && !query.isFetching) {
-      throw query.error;
-    }
-  });
-
-  const [curAvatar, setCurAvatar] = useState<string>('pig');
-
-  useEffect(() => {
-    if (avatarQuery.data.data.length === 1) {
-      setCurAvatar(avatarQuery.data.data[0].avatarModel);
-    } else if (avatarQuery.data.data.length === 2) {
-      setCurAvatar(
-        avatarQuery.data.data[0].isMain
-          ? avatarQuery.data.data[0].avatarModel
-          : avatarQuery.data.data[1].avatarModel,
-      );
-    }
-  }, []);
+const Mypage = () => {
+  const userQuery = useSuspenseQuery<AxiosResponse<IUserInfo>>({
+    queryKey: ['userinfo'],
+  }).data;
+  const avatarQuery = useSuspenseQuery<AxiosResponse<IAvatar[]>>({
+    queryKey: ['avatarinfo'],
+  }).data;
+  const [curAvatar, setCurAvatar] = useState<string>(
+    avatarQuery.data.length
+      ? getMainAvatar(avatarQuery.data).avatarModel
+      : 'pig',
+  );
 
   return (
     <>
-      <div css={containerCss}>
-        <UserInfo avatarModel={curAvatar} info={userQuery.data.data} />
-        <AvatarProfile avatars={avatarQuery.data.data} />
+      <div css={userInfoContainerCss}>
+        <UserInfo avatarModel={curAvatar} info={userQuery.data} />
+        <AvatarProfile avatars={avatarQuery.data} />
         <ManageInfo
           title={'내정보'}
           labels={['nickEdit', 'pwdEdit', 'achievement']}
           url={['/mypage/nick', '/mypage/pwd', '/mypage/achievement']}
-          data={[userQuery.data.data.nickname]}
+          data={[userQuery?.data.nickname]}
         />
         <ManageInfo
           title={'아바타'}
           labels={['infoEdit', 'qnaEdit']}
           url={['/mypage/avatar', '/mypage/avatar/qna']}
           data={[]}
-          avatars={avatarQuery.data.data}
+          avatars={avatarQuery?.data}
         />
       </div>
     </>
   );
 };
 
-export default MypageV2;
+export default Mypage;

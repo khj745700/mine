@@ -1,14 +1,13 @@
 /** @jsxImportSource @emotion/react */
-import React, { useState } from 'react';
-import MenuBar from '../../components/organisms/MenuBar';
-import AppBar from '../../components/organisms/AppBar';
-import TransitionAnimation from '../../components/common/TransitionAnimation';
-import styles from './Main.module.css';
-import Home from './Home';
-import { containerCss, contentCss } from './style';
-import Chat from './Chat';
-import MypageV2 from './Mypage';
+import React, { Suspense, useState } from 'react';
+import { mainContainerCss } from './style';
 import { useLocation } from 'react-router-dom';
+import AppBar from '../../components/organisms/AppBar';
+import MenuBar from '../../components/organisms/MenuBar';
+import MainFetch from './MainFetch';
+import Loading from '../../components/molecules/Loading';
+import { ErrorBoundary } from 'react-error-boundary';
+import Error from '../../components/molecules/Error';
 
 const Main = () => {
   const location = useLocation();
@@ -18,7 +17,7 @@ const Main = () => {
 
   return (
     <>
-      <div css={containerCss}>
+      <div css={mainContainerCss}>
         <AppBar
           label={
             curMenu === 0
@@ -28,21 +27,12 @@ const Main = () => {
                 : '마이페이지'
           }
         />
-        <div css={contentCss}>
-          <TransitionAnimation
-            data-key={curMenu.toString()}
-            className={{
-              normal: styles.fade,
-              enter: styles['fade-enter'],
-              exit: styles['fade-exit'],
-            }}
-          >
-            <Chat key={0} />
-            <Home key={1} />
-            <MypageV2 key={2} />
-          </TransitionAnimation>
-        </div>
-        <MenuBar page="chat" menu={curMenu} setCurMenu={setCurMenu} />
+        <ErrorBoundary fallbackRender={(props) => <Error {...props} />}>
+          <Suspense fallback={<Loading />}>
+            <MainFetch menu={curMenu} />
+          </Suspense>
+        </ErrorBoundary>
+        <MenuBar menu={curMenu} setCurMenu={setCurMenu} />
       </div>
     </>
   );
