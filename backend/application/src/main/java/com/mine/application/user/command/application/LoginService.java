@@ -30,7 +30,6 @@ public class LoginService {
     @Value("${spring.session.expire-seconds}") private Integer expireSeconds;
 
     public void login(LoginRequest loginRequest) {
-        log.info(httpSession.getId());
         Optional<User> findUser = userRepository.findByEmail(loginRequest.getEmail());
         if (findUser.isPresent()) {
             User user = findUser.get();

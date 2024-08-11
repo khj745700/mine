@@ -47,10 +47,11 @@ public class RegisterAvatarService {
 
         avatar.setQuestionResList(questionResList);
 
+        avatarRepository.save(avatar);
+
         Assistant assistant = assistantService.generateAssistant(avatar);
         avatar.enrollAssistant(assistant);
 
-        avatarRepository.save(avatar);
 
         Optional<Avatar> avatarByUserIdAndNotAvatarId = avatarRepository.findAvatarByUserIdAndNotAvatarId(userId, avatar.getId());
         avatarByUserIdAndNotAvatarId.ifPresent(avatarByUserId -> {avatarByUserId.modifyAvatarInfo(ModifyAvatarRequest.builder().isMain(false).build());});
