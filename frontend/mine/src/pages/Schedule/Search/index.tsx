@@ -18,8 +18,8 @@ interface SearchData {
 }
 
 const types: { name: string; value: ScheduleSearchType }[] = [
-  { name: '키워드 검색', value: 'keyword' },
   { name: 'AI 검색', value: 'ai' },
+  { name: '키워드 검색', value: 'keyword' },
 ];
 
 const tips: Record<ScheduleSearchType, string> = {
