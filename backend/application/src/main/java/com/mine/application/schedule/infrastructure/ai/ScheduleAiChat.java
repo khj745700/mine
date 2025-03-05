@@ -50,7 +50,7 @@ public class ScheduleAiChat {
                 query에서 where에 대한 정보를 알 수 없다면 null을 넣어.
                 """);
         Prompt prompt = promptTemplate.create(Map.of("query", query, "now", LocalDateTime.now().toString()));
-        String response = openAiChatModel.call(prompt).getResult().getOutput().getContent();
+        String response = openAiChatModel.call(prompt).getResult().getOutput().getText();
 
         return convertJsonToObject(formatToJson(response), AddScheduleDto.class);
     }
@@ -74,7 +74,7 @@ public class ScheduleAiChat {
                 "query", query,
                 "now", LocalDateTime.now().toString())
         );
-        String response = openAiChatModel.call(prompt).getResult().getOutput().getContent();
+        String response = openAiChatModel.call(prompt).getResult().getOutput().getText();
 
         return formatToJson(response);
     }

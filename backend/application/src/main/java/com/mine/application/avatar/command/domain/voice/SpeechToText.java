@@ -34,10 +34,10 @@ public class SpeechToText {
     private OpenAiAudioTranscriptionOptions getTranscriptionOptions() {
         OpenAiAudioApi.TranscriptResponseFormat responseFormat = OpenAiAudioApi.TranscriptResponseFormat.JSON;
         return OpenAiAudioTranscriptionOptions.builder()
-                .withLanguage("ko")
-                .withPrompt("Ask not this, but ask that")
-                .withTemperature(0f)
-                .withResponseFormat(responseFormat)
+                .language("ko")
+                .prompt("Ask not this, but ask that")
+                .temperature(0f)
+                .responseFormat(responseFormat)
                 .build();
     }
 
