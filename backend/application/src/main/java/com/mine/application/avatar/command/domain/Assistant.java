@@ -7,7 +7,7 @@ import lombok.*;
 @Embeddable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Builder
 public class Assistant {
 

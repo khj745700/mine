@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import java.io.File;
 
 @Embeddable
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class Voice {
