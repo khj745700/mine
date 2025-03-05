@@ -50,7 +50,7 @@ public class AccountAiChat {
                 그리고 초는 0초로 줘.
                 """);
         Prompt prompt = promptTemplate.create(Map.of("query", query, "now", LocalDateTime.now().toString()));
-        String response = openAiChatModel.call(prompt).getResult().getOutput().getContent();
+        String response = openAiChatModel.call(prompt).getResult().getOutput().getText();
         System.out.println(response);
         return convertJsonToObject(formatToJson(response), AddAccountDto.class);
     }
@@ -76,7 +76,7 @@ public class AccountAiChat {
                 "query", query,
                 "now", LocalDateTime.now().toString())
         );
-        String response = openAiChatModel.call(prompt).getResult().getOutput().getContent();
+        String response = openAiChatModel.call(prompt).getResult().getOutput().getText();
 
         return formatToJson(response);
     }
@@ -111,7 +111,7 @@ public class AccountAiChat {
                 "currData", currData
         ));
 
-        return openAiChatModel.call(prompt).getResult().getOutput().getContent();
+        return openAiChatModel.call(prompt).getResult().getOutput().getText();
     }
 
     public String getIncomeAccountAnalysis(
@@ -137,7 +137,7 @@ public class AccountAiChat {
                 "currValue", currValue
         ));
 
-        return openAiChatModel.call(prompt).getResult().getOutput().getContent();
+        return openAiChatModel.call(prompt).getResult().getOutput().getText();
     }
 
     private <T> T convertJsonToObject(String json, Class<T> valueType) {
