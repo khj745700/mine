@@ -4,12 +4,12 @@ import com.mine.application.common.domain.SessionConstants;
 import com.mine.application.common.domain.SessionDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.collections.ManagedConcurrentWeakHashMap;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ConcurrentReferenceHashMap;
 
 import java.lang.reflect.Method;
 
@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component
 @Aspect
 public class DuplicateRequestCheckAspect {
-    private final ManagedConcurrentWeakHashMap<Integer, ManagedConcurrentWeakHashMap<String, LastLockInfo>> locks = new ManagedConcurrentWeakHashMap<>();
+    private final ConcurrentReferenceHashMap<Integer, ConcurrentReferenceHashMap<String, LastLockInfo>> locks = new ConcurrentReferenceHashMap<>(30, ConcurrentReferenceHashMap.ReferenceType.WEAK);
     private final SessionDao sessionDao;
 
     @Around("@annotation(com.mine.application.common.aop.Lock)")
@@ -33,8 +33,8 @@ public class DuplicateRequestCheckAspect {
         Lock lockAnnotation = method.getAnnotation(Lock.class);
         Integer milli = lockAnnotation.milli();
 
-        ManagedConcurrentWeakHashMap<String, LastLockInfo> userLocks = locks.computeIfAbsent(nowSession,
-                k -> new ManagedConcurrentWeakHashMap<>());
+        ConcurrentReferenceHashMap<String, LastLockInfo> userLocks = locks.computeIfAbsent(nowSession,
+                k -> new ConcurrentReferenceHashMap<>(30, ConcurrentReferenceHashMap.ReferenceType.WEAK));
 
         long currentTimeMillis = System.currentTimeMillis();
 
