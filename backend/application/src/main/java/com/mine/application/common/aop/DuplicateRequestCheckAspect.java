@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component
 @Aspect
 public class DuplicateRequestCheckAspect {
-    private final ConcurrentReferenceHashMap<Integer, ConcurrentReferenceHashMap<String, LastLockInfo>> locks = new ConcurrentReferenceHashMap<>(30, ConcurrentReferenceHashMap.ReferenceType.WEAK);
+    private final ConcurrentReferenceHashMap<Integer, ConcurrentReferenceHashMap<String, LastLockInfo>> locks = new ConcurrentReferenceHashMap<>(16, ConcurrentReferenceHashMap.ReferenceType.SOFT);
     private final SessionDao sessionDao;
 
     @Around("@annotation(com.mine.application.common.aop.Lock)")
@@ -32,31 +32,32 @@ public class DuplicateRequestCheckAspect {
         Method method = signature.getMethod();
         Lock lockAnnotation = method.getAnnotation(Lock.class);
         Integer milli = lockAnnotation.milli();
-
-        ConcurrentReferenceHashMap<String, LastLockInfo> userLocks = locks.computeIfAbsent(nowSession,
-                k -> new ConcurrentReferenceHashMap<>(30, ConcurrentReferenceHashMap.ReferenceType.WEAK));
-
         long currentTimeMillis = System.currentTimeMillis();
+        LastLockInfo lockInfo;
+        ConcurrentReferenceHashMap<String, LastLockInfo> userLocks = locks.computeIfAbsent(nowSession,
+                k -> new ConcurrentReferenceHashMap<>(16, ConcurrentReferenceHashMap.ReferenceType.SOFT));
+        synchronized (userLocks) {
 
-        LastLockInfo lockInfo = userLocks.get(methodId);
+            lockInfo = userLocks.get(methodId);
 
-        if (lockInfo != null) {
-            long expirationTime = lockInfo.lastLockTimeMillis + milli;
-            if (currentTimeMillis < expirationTime) {
-                log.warn("Request blocked - previous request at {} is still within lock period. User: {}, Method: {}",
-                        lockInfo.lastLockTimeMillis, nowSession, methodId);
-                throw new DuplicateRequestException();
+            if (lockInfo != null) {
+                long expirationTime = lockInfo.lastLockTimeMillis + milli;
+                if (currentTimeMillis < expirationTime) {
+                    log.error("Request blocked - previous request at {} is still within lock period. User: {}, Method: {}",
+                            lockInfo.lastLockTimeMillis, nowSession, methodId);
+                    throw new DuplicateRequestException();
+                }
             }
-        }
 
-        if (lockInfo == null) {
-            ReentrantLock newLock = new ReentrantLock();
-            lockInfo = new LastLockInfo(newLock, currentTimeMillis);
-            userLocks.put(methodId, lockInfo);
-        } else {
-            lockInfo.lastLockTimeMillis = currentTimeMillis;
-        }
+            if (lockInfo == null) {
+                ReentrantLock newLock = new ReentrantLock();
+                lockInfo = new LastLockInfo(newLock, currentTimeMillis);
+                userLocks.put(methodId, lockInfo);
+            } else {
+                lockInfo.lastLockTimeMillis = currentTimeMillis;
+            }
 
+        }
         boolean acquired = false;
         try {
             acquired = lockInfo.lock.tryLock();
