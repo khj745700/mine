@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 
 @AllArgsConstructor
@@ -16,8 +17,8 @@ public class UserVerificationEmailDto implements Serializable {
     private String verificationNumber;
     private boolean isValid;
 
-    public boolean verify(String verificationNumber) {
-        isValid = this.verificationNumber.equals(verificationNumber);
+    public boolean verify(String verificationNumber, String email) {
+        isValid = Objects.equals(verificationNumber, this.verificationNumber) && Objects.equals(email, this.email);
         return isValid;
     }
 

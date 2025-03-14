@@ -70,7 +70,7 @@ public class EmailVerificationService {
     public boolean verifyEmail(EmailVerificationRequest request) {
         Optional<Object> object = sessionDao.get(SessionConstants.EMAIL_VERIFICATION);
         UserVerificationEmailDto userVerificationEmailDto = (UserVerificationEmailDto) object.get();
-        if(userVerificationEmailDto.verify(request.getNumber())) {
+        if(userVerificationEmailDto.verify(request.getNumber(), request.getEmail())) {
             sessionDao.put(SessionConstants.EMAIL_VERIFICATION, userVerificationEmailDto);
             return true;
         }
