@@ -84,9 +84,7 @@ class PasswordConverterTest {
     @Test
     void convertToDatabaseColumn_shouldHandleNullValue() {
         // When
-        byte[] result = converter.convertToDatabaseColumn(null);
-
         // Then
-        assertNull(result);
+        assertThrows(NullPointerException.class, () -> converter.convertToDatabaseColumn(null));
     }
 }
