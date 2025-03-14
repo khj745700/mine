@@ -4,9 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.nio.charset.StandardCharsets;
@@ -30,18 +29,20 @@ class PasswordConverterTest {
     @Test
     void convertToDatabaseColumn_whenPasswordIsNotEncoded_shouldEncodePassword() {
         // Given
+        PasswordEncoder localPasswordEncoder = Mockito.mock(PasswordEncoder.class);
+        PasswordConverter.setPasswordEncoder(localPasswordEncoder);
         String rawPassword = "myPassword123";
         String encodedPassword = "encodedPassword";
         Password password = Password.of(rawPassword, false);
 
-        when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
+        when(localPasswordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
 
         // When
         byte[] result = converter.convertToDatabaseColumn(password);
 
         // Then
         assertArrayEquals(encodedPassword.getBytes(StandardCharsets.UTF_8), result);
-        verify(passwordEncoder, times(1)).encode(rawPassword);
+        verify(localPasswordEncoder, times(1)).encode(rawPassword);
     }
 
     @Test
